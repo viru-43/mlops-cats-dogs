@@ -6,3 +6,12 @@ stages:
       - data/raw
     outs:
       - data/processed
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - src/model.py
+      - data/processed
+    outs:
+      - models/model.pt
