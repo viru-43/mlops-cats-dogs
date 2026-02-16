@@ -2,3 +2,10 @@ data/raw/*
 !data/raw.dvc
 dvc_storage/
 data/processed
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+mlflow.db
+mlflow
+mlruns/

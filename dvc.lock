@@ -1,7 +1,7 @@
 schema: '2.0'
 stages:
   preprocess:
-    cmd: python src/data_preprocessing.py
+    cmd: python -m src.data_preprocessing
     deps:
     - path: data/raw
       hash: md5
@@ -18,3 +18,24 @@ stages:
       md5: 4339ee1edd63f909bbab8a829a7a3986.dir
       size: 56275098
       nfiles: 6000
+  train:
+    cmd: python -m src.train
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 4339ee1edd63f909bbab8a829a7a3986.dir
+      size: 56275098
+      nfiles: 6000
+    - path: src/model.py
+      hash: md5
+      md5: 932b5f04d11c9bb672d2d5bb3604fde9
+      size: 378
+    - path: src/train.py
+      hash: md5
+      md5: 2a643b76d9fb7f13092eed7616006ce7
+      size: 2154
+    outs:
+    - path: models/model.pt
+      hash: md5
+      md5: e98127796dba6e606e44b58baf887d6e
+      size: 44780939

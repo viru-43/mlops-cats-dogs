@@ -7,7 +7,7 @@ from pathlib import Path
 import mlflow
 import time
 
-from model import get_model
+from src.model import get_model
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DATA_DIR = "data/processed"
