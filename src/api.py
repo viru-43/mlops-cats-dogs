@@ -7,6 +7,10 @@ import io
 import time
 
 from src.model import get_model
+import logging
+logging.basicConfig(level=logging.INFO)
+
+request_count = 0
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -33,6 +37,9 @@ def health():
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
+    global request_count
+    request_count += 1
+
     start_time = time.time()
 
     contents = await file.read()
@@ -46,8 +53,21 @@ async def predict(file: UploadFile = File(...)):
 
     latency = time.time() - start_time
 
+    logging.info(
+        f"Request #{request_count} | "
+        f"Prediction: {CLASS_NAMES[predicted.item()]} | "
+        f"Confidence: {confidence.item():.4f} | "
+        f"Latency: {latency:.4f}s"
+    )
+
     return {
         "label": CLASS_NAMES[predicted.item()],
         "confidence": float(confidence.item()),
         "latency_seconds": latency
+    }
+
+@app.get("/metrics")
+def metrics():
+    return {
+        "total_requests": request_count
     }
