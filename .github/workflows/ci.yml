@@ -33,9 +33,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # 6️⃣ Run unit tests
-      - name: Run tests
-        run: python -m pytest
+      # 6️⃣ Run unit tests only (NOT smoke test)
+      - name: Run unit tests
+        run: python -m pytest tests/
 
       # 7️⃣ Build Docker image
       - name: Build Docker image
@@ -52,3 +52,21 @@ jobs:
       # 🔟 Push Docker image
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/cats-dogs-api:latest
+
+      # 1️⃣1️⃣ Run container for smoke testing
+      - name: Run container for smoke testing
+        run: |
+          docker run -d -p 8000:8000 --name smoke-test-container ${{ secrets.DOCKER_USERNAME }}/cats-dogs-api:latest
+          sleep 5
+
+      # 1️⃣2️⃣ Install requests for smoke check
+      - name: Install requests
+        run: pip install requests
+
+      # 1️⃣3️⃣ Run smoke test
+      - name: Run smoke test
+        run: python smoke_check.py
+
+      # 1️⃣4️⃣ Stop container
+      - name: Stop container
+        run: docker stop smoke-test-container
