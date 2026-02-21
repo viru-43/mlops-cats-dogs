@@ -5,9 +5,11 @@ from fastapi import FastAPI, File, UploadFile
 from PIL import Image
 import io
 import time
+from pathlib import Path
+import logging
 
 from src.model import get_model
-import logging
+
 logging.basicConfig(level=logging.INFO)
 
 request_count = 0
@@ -16,9 +18,15 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 app = FastAPI()
 
+# --------------------------------------------------
+# Resolve model path safely (works locally + Docker)
+# --------------------------------------------------
+BASE_DIR = Path(__file__).resolve().parent.parent
+MODEL_PATH = BASE_DIR / "models" / "model.pt"
+
 # Load model
 model = get_model()
-model.load_state_dict(torch.load("models/model.pt", map_location=DEVICE))
+model.load_state_dict(torch.load(MODEL_PATH, map_location=DEVICE))
 model.to(DEVICE)
 model.eval()
 
@@ -65,6 +73,7 @@ async def predict(file: UploadFile = File(...)):
         "confidence": float(confidence.item()),
         "latency_seconds": latency
     }
+
 
 @app.get("/metrics")
 def metrics():
