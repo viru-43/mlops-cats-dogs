@@ -153,7 +153,7 @@ The API includes basic monitoring features:
 ## 🎥 Demo Video
 
 📎 **Demo Video Link:**\
-`<PASTE_YOUR_GOOGLE_DRIVE_VIDEO_LINK_HERE>`{=html}
+`https://drive.google.com/file/d/114LKiafi5a6Rlym-_SM5pI78J1ZK-kQw/view?usp=sharing`
 
 ------------------------------------------------------------------------
 
