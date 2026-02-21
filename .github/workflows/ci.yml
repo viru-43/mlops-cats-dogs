@@ -9,72 +9,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      # 3️⃣ Upgrade pip
       - name: Upgrade pip
         run: pip install --upgrade pip
 
-      # 4️⃣ Install DVC
-      - name: Install DVC
-        run: pip install dvc
-
-      # 5️⃣ Pull DVC artifacts (IMPORTANT)
-      - name: Pull DVC artifacts
-        run: dvc pull
-
-      # 6️⃣ Install CPU-only PyTorch
       - name: Install CPU PyTorch
         run: |
           pip install torch==2.2.2 torchvision==0.17.2 \
           --index-url https://download.pytorch.org/whl/cpu
 
-      # 7️⃣ Install remaining dependencies
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # 8️⃣ Run unit tests only
       - name: Run unit tests
         run: python -m pytest tests/
 
-      # 9️⃣ Build Docker image (model now included)
       - name: Build Docker image
         run: docker build -t cats-dogs-api .
 
-      # 🔟 Login to Docker Hub
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      # 1️⃣1️⃣ Tag Docker image
       - name: Tag Docker image
         run: docker tag cats-dogs-api ${{ secrets.DOCKER_USERNAME }}/cats-dogs-api:latest
 
-      # 1️⃣2️⃣ Push Docker image
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/cats-dogs-api:latest
 
-      # 1️⃣3️⃣ Run container for smoke testing
       - name: Run container for smoke testing
         run: |
           docker run -d -p 8000:8000 --name smoke-test-container ${{ secrets.DOCKER_USERNAME }}/cats-dogs-api:latest
           sleep 5
 
-      # 1️⃣4️⃣ Install requests for smoke check
       - name: Install requests
         run: pip install requests
 
-      # 1️⃣5️⃣ Run smoke test
       - name: Run smoke test
         run: python smoke_check.py
 
-      # 1️⃣6️⃣ Stop container
       - name: Stop container
         run: docker stop smoke-test-container
